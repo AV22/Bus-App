@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
             return jsonResponse;
         }
 
+        //returns the json string
         protected String onPostExecution(String json) {
             return json;
         }
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
             return url;
         }
 
+        //makes http request through the internet
         private String makeHttpRequest(URL url) throws IOException {
             String json = "";
             HttpURLConnection urlConnection = null;
