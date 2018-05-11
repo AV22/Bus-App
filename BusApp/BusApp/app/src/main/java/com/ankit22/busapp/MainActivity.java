@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,17 +22,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        BusAsyncTask task = new BusAsyncTask();
+        task.execute("http://webservices.nextbus.com/service/publicJSONFeed?a=rutgers&command=routeList");
     }
 
     //Base URL String
-    String baseURL = "";
+    String baseURL = "http://webservices.nextbus.com/service/publicJSONFeed?a=rutgers&command=routeList";
     //
+    String jsonResult = "";
 
     //gets the json fileout put from the background
-    private class BusAsyncTask extends AsyncTask<URL, Void, String> {
-
-        protected String doInBackground(URL... url) {
-            URL jsonUrl = createURL(baseURL);
+    private class BusAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... url) {
+            URL jsonUrl = createURL(url[0]);
 
             // Perform HTTP request to the URL and receive a JSON response back
             String jsonResponse = "";
@@ -40,12 +46,16 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("HTTP", "Problem making the HTTP request.", e);
             }
 
+            Log.e("Background", "Got through");
             return jsonResponse;
         }
 
         //returns the json string
-        protected String onPostExecution(String json) {
-            return json;
+        @Override
+        protected void onPostExecute(String json){
+            Log.e("PostExecution", "Returned json");
+            jsonResult = json;
+            //return;
         }
 
         //takes the string and converts it to a url
@@ -112,4 +122,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    public void jsonGet (View v){
+        TextView string = findViewById(R.id.hello);
+        BusAsyncTask task = new BusAsyncTask();
+        task.execute(baseURL);
+        string.setText(jsonResult);
+    }
 }
